@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Device Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+<button class="menu-toggle" onclick="toggleSidebar()">
+    <i id="menu-icon" class="fas fa-chevron-left"></i>
+</button>
+<div class="sidebar" id="sidebar">
+    <h2>SilentZone</h2>
+    <a onclick="loadPage('dashboard')"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+    <a  onclick="loadPage('devices')"><i class="fas fa-box"></i> Devices</a>
+    <a  onclick="loadPage('users')"><i class="fas fa-users"></i> Users</a>
+    <div class="menu-title">Products</div>
+    <a onclick="loadPage('calendar')"><i class="fas fa-calendar"></i> Calendar</a>
+    <a onclick="loadPage('gallery')"><i class="fas fa-images"></i> Gallery</a>
+    <a  onclick="loadPage('mailbox')"><i class="fas fa-envelope"></i> Mailbox</a>
+    <a  onclick="loadPage('pages')"><i class="fas fa-file"></i> Pages</a>
+</div>
+<div class="content" id="content">
+    <header>
+        <h1>SilentZone Dashboard</h1>
+    </header>
+    <main id="main-content">
+        <!-- Main content will be dynamically loaded here -->
+        <h2>Welcome to SilentZone</h2>
+        <p>Select a menu item to see more details.</p>
+    </main>
+</div>
+<script>
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const content = document.getElementById('content');
+        const menuIcon = document.getElementById('menu-icon');
+
+        sidebar.classList.toggle('show');
+        content.classList.toggle('sidebar-hidden');
+
+        // Toggle the menu icon
+        if (sidebar.classList.contains('show')) {
+            menuIcon.classList.remove('fa-chevron-right');
+            menuIcon.classList.add('fa-chevron-left');
+        } else {
+            menuIcon.classList.remove('fa-chevron-left');
+            menuIcon.classList.add('fa-chevron-right');
+        }
+    }
+
+    function loadPage(page) {
+        const mainContent = document.getElementById('main-content');
+        if (page === 'dashboard') {
+            mainContent.innerHTML = `
+                <h2>Dashboard</h2>
+                <p>Welcome to the dashboard. Here you can see an overview of your system.</p>
+            `;
+            history.pushState(null, null, '/dashboard');
+        } else if (page === 'devices') {
+            mainContent.innerHTML = `
+                <h2>Devices</h2>
+                <div class="controls">
+                    <input type="text" id="search" placeholder="Search" oninput="filterDevices()">
+                </div>
+                <div id="device-container">
+                    <p id="no-devices-message">No Devices found.</p>
+                    <div class="device-grid" id="device-grid">
+                        <!-- Device cards will be dynamically inserted here -->
+                    </div>
+                </div>
+            `;
+            loadDevices();
+            history.pushState(null, null, '/devices');
+        } else if (page === 'users') {
+            mainContent.innerHTML = `
+                <h2>Users</h2>
+                <p>Manage your users here.</p>
+            `;
+        } else if (page === 'calendar') {
+            mainContent.innerHTML = `
+                <h2>Calendar</h2>
+                <p>View and manage your calendar events.</p>
+            `;
+        } else if (page === 'gallery') {
+            mainContent.innerHTML = `
+                <h2>Gallery</h2>
+                <p>Browse through the gallery.</p>
+            `;
+        } else if (page === 'mailbox') {
+            mainContent.innerHTML = `
+                <h2>Mailbox</h2>
+                <p>Check your mailbox.</p>
+            `;
+        } else if (page === 'pages') {
+            mainContent.innerHTML = `
+                <h2>Pages</h2>
+                <p>Manage your pages here.</p>
+            `;
+        }
+    }
+
+    function loadDevices() {
+        fetch('/devices')
+            .then(response => response.json())
+            .then(devices => {
+                displayDevices(devices);
+            })
+            .catch(error => {
+                console.error('Error loading devices:', error);
+                alert('Failed to load devices. Please try again later.');
+            });
+    }
+
+
+    function displayDevices(devices) {
+        const deviceGrid = document.getElementById('device-grid');
+        const noDevicesMessage = document.getElementById('no-devices-message');
+
+        // Clear existing devices
+        deviceGrid.innerHTML = '';
+
+        if (devices.length > 0) {
+            noDevicesMessage.style.display = 'none';
+            devices.forEach(device => {
+                // Create device card
+                const deviceCard = document.createElement('div');
+                deviceCard.classList.add('device-card');
+
+                // Create device header
+                const deviceHeader = document.createElement('div');
+                deviceHeader.classList.add('device-header');
+
+                // Create status indicator circle
+                // const statusIndicator = document.createElement('div');
+                // statusIndicator.classList.add('status-indicator');
+                // statusIndicator.classList.add(device.status === 'connected' ? 'connected' : 'disconnected');
+                //
+                const deviceStatus = document.createElement('div');
+                deviceStatus.classList.add('device-status');
+                deviceStatus.style.backgroundColor = device.status ? '#32ef32' : 'red';
+
+                const deviceName = document.createElement('div');
+                deviceName.classList.add('device-name');
+
+                const deviceTitle = document.createElement('h3');
+                deviceTitle.innerText = device.name;
+                const deviceID = document.createElement('p');
+                deviceID.innerText = `Device ID: ${device.deviceId}`;
+
+                deviceName.appendChild(deviceTitle);
+                deviceName.appendChild(deviceID);
+
+                deviceHeader.appendChild(deviceStatus);
+                deviceHeader.appendChild(deviceName);
+
+                // Create device info
+                const deviceInfo = document.createElement('div');
+                deviceInfo.classList.add('device-info');
+
+                const deviceTemp = document.createElement('div');
+                deviceTemp.classList.add('device-temp');
+                deviceTemp.innerHTML = '<span>Temperature</span><strong>0</strong><span>°C</span>';
+
+                const deviceStats = document.createElement('div');
+                deviceStats.classList.add('device-stats');
+                deviceStats.innerHTML = '<span>0</span><span>0</span>';
+
+                deviceInfo.appendChild(deviceTemp);
+                deviceInfo.appendChild(deviceStats);
+
+                // Append header and info to device card
+                deviceCard.appendChild(deviceHeader);
+                deviceCard.appendChild(deviceInfo);
+
+                // Create connect button
+                const connectButton = document.createElement('button');
+                connectButton.innerText = 'Connect';
+                connectButton.onclick = () => connectDevice(device.name, device.deviceId);
+
+                //Append connect button to device card
+                deviceCard.appendChild(connectButton);
+
+               // // Add click event to navigate to the chart page
+               //  deviceCard.addEventListener('click', () => {
+               //      window.location.href = `chart.html?deviceName=${encodeURIComponent(device.name)}&deviceID=${encodeURIComponent(device.deviceId)}`;
+               //  });
+
+                // Append device card to device grid
+                deviceGrid.appendChild(deviceCard);
+            });
+        } else {
+            noDevicesMessage.style.display = 'block';
+        }
+    }
+
+    async function connectDevice(deviceName, deviceId) {
+        try {
+            const response = await fetch('/connect-device', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ deviceName, deviceId})
+            });
+            if (response.ok) {
+                alert('Device connected successfully');
+                loadDevices(); // Reload devices after connecting
+            } else {
+                alert('Failed to connect device');
+            }
+        } catch (error) {
+            console.error('Error connecting device:', error);
+            alert('Failed to connect device. Please try again later.');
+        }
+    }
+
+
+
+    // Load devices when the page loads
+    window.onload = () => loadPage('dashboard');
+</script>
+</body>
+</html>
+
+
+
+<!--<!DOCTYPE html>-->
+<!--<html>-->
+<!--<head>-->
+<!--    <title>Device Dashboard</title>-->
+<!--    <link rel="stylesheet" href="../../Server/sourceserver/template/styles.css">-->
+<!--</head>-->
+<!--<body>-->
+<!--<header>-->
+<!--    <h1>SilentZone Dashboard</h1>-->
+<!--</header>-->
+<!--<main>-->
+<!--    <h2>Devices</h2>-->
+<!--    <div class="controls">-->
+<!--        <input type="text" placeholder="Search">-->
+<!--        <button class="btn" onclick="sendRequest()"><i class="fa fa-bars"></i> Find Device in Mesh Wifi</button>-->
+<!--    </div>-->
+<!--    <div id="device-container">-->
+<!--        <p id="no-devices-message">No Devices found. Pressing button Find Device </p>-->
+<!--        <div class="device-grid" id="device-grid">-->
+<!--            &lt;!&ndash; Device cards will be dynamically inserted here &ndash;&gt;-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</main>-->
+<!--<script>-->
+<!--    async function sendRequest() {-->
+<!--        try {-->
+<!--            const response = await fetch('/send-request');-->
+<!--            const result = await response.json();-->
+<!--            displayDevices(result);-->
+<!--        } catch (error) {-->
+<!--            console.error('Error fetching the devices:', error);-->
+<!--        }-->
+<!--    }-->
+
+<!--    async function loadDevices() {-->
+<!--        try {-->
+<!--            const response = await fetch('/devices');-->
+<!--            const devices = await response.json();-->
+<!--            displayDevices(devices);-->
+<!--        } catch (error) {-->
+<!--            console.error('Error loading devices from Firestore:', error);-->
+<!--        }-->
+<!--    }-->
+
+<!--    async function connectDevice(address, port, deviceName) {-->
+<!--        try {-->
+<!--            const response = await fetch('/connect-device', {-->
+<!--                method: 'POST',-->
+<!--                headers: {-->
+<!--                    'Content-Type': 'application/json'-->
+<!--                },-->
+<!--                body: JSON.stringify({ address, port, deviceName })-->
+<!--            });-->
+<!--            if (response.ok) {-->
+<!--                alert('Device connected and saved');-->
+<!--                loadDevices(); // Reload the devices after saving-->
+<!--            } else {-->
+<!--                alert('Error connecting device');-->
+<!--            }-->
+<!--        } catch (error) {-->
+<!--            console.error('Error connecting device:', error);-->
+<!--        }-->
+<!--    }-->
+
+<!--    function displayDevices(devices) {-->
+<!--        const deviceGrid = document.getElementById('device-grid');-->
+<!--        const noDevicesMessage = document.getElementById('no-devices-message');-->
+
+<!--        // Clear existing devices-->
+<!--        deviceGrid.innerHTML = '';-->
+
+<!--        if (devices.length > 0) {-->
+<!--            noDevicesMessage.style.display = 'none';-->
+<!--            devices.forEach(device => {-->
+<!--                // Create device card-->
+<!--                const deviceCard = document.createElement('div');-->
+<!--                deviceCard.classList.add('device-card');-->
+
+<!--                // Create device header-->
+<!--                const deviceHeader = document.createElement('div');-->
+<!--                deviceHeader.classList.add('device-header');-->
+
+<!--                const deviceStatus = document.createElement('div');-->
+<!--                deviceStatus.classList.add('device-status', 'offline'); // Adjust class based on actual status-->
+<!--                const deviceName = document.createElement('div');-->
+<!--                deviceName.classList.add('device-name');-->
+
+<!--                const deviceTitle = document.createElement('h3');-->
+<!--                deviceTitle.innerText = device.deviceName || 'Unnamed Device';-->
+<!--                const deviceIp = document.createElement('p');-->
+<!--                deviceIp.innerText = `IP Device ${device.address}`;-->
+
+<!--                deviceName.appendChild(deviceTitle);-->
+<!--                deviceName.appendChild(deviceIp);-->
+
+<!--                deviceHeader.appendChild(deviceStatus);-->
+<!--                deviceHeader.appendChild(deviceName);-->
+
+<!--                // Create device info-->
+<!--                const deviceInfo = document.createElement('div');-->
+<!--                deviceInfo.classList.add('device-info');-->
+
+<!--                const deviceTemp = document.createElement('div');-->
+<!--                deviceTemp.classList.add('device-temp');-->
+<!--                deviceTemp.innerHTML = '<span>Temperature</span><strong>0</strong><span>°C</span>';-->
+
+<!--                const deviceStats = document.createElement('div');-->
+<!--                deviceStats.classList.add('device-stats');-->
+<!--                deviceStats.innerHTML = '<span>0</span><span>0</span>';-->
+
+<!--                deviceInfo.appendChild(deviceTemp);-->
+<!--                deviceInfo.appendChild(deviceStats);-->
+
+<!--                // Append header and info to device card-->
+<!--                deviceCard.appendChild(deviceHeader);-->
+<!--                deviceCard.appendChild(deviceInfo);-->
+
+<!--                // Create connect button-->
+<!--                const connectButton = document.createElement('button');-->
+<!--                connectButton.innerText = 'Connect';-->
+<!--                connectButton.onclick = () => connectDevice(device.address, device.port, device.deviceName);-->
+
+<!--                // Append connect button to device card-->
+<!--                deviceCard.appendChild(connectButton);-->
+
+<!--                // Add click event to navigate to the chart page-->
+<!--                deviceCard.addEventListener('click', () => {-->
+<!--                    window.location.href = `chart.html?deviceName=${encodeURIComponent(device.deviceName || 'Unnamed Device')}&deviceIp=${encodeURIComponent(device.address)}`;-->
+<!--                });-->
+
+<!--                // Append device card to device grid-->
+<!--                deviceGrid.appendChild(deviceCard);-->
+<!--            });-->
+<!--        } else {-->
+<!--            noDevicesMessage.style.display = 'block';-->
+<!--        }-->
+<!--    }-->
+
+<!--    // Load devices when the page loads-->
+<!--    window.onload = loadDevices;-->
+<!--</script>-->
+<!--</body>-->
+<!--</html>-->
+
