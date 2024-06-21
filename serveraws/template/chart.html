@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Combined Dashboard</title>
+    <link rel="stylesheet" href="chartCSS.css">
+    <style>
+        #chart {
+            max-width: 750px;
+            margin: 35px auto;
+        }
+        .faint {
+            background-color: lightgray;
+            color: black;
+            padding: 5px;
+            border-radius: 5px;
+            margin: 5px 0;
+        }
+        .moderate {
+            background-color: lightgreen;
+            color: black;
+            padding: 5px;
+            border-radius: 5px;
+            margin: 5px 0;
+        }
+        .loud {
+            background-color: yellow;
+            color: black;
+            padding: 5px;
+            border-radius: 5px;
+            margin: 5px 0;
+        }
+        .very-loud {
+            background-color: orange;
+            color: black;
+            padding: 5px;
+            border-radius: 5px;
+            margin: 5px 0;
+        }
+        .extremely-loud {
+            background-color: red;
+            color: black;
+            padding: 5px;
+            border-radius: 5px;
+            margin: 5px 0;
+        }
+        #average-display {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 150px;
+            height: 150px;
+            margin: 35px auto;
+            border: 2px solid #000;
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+        }
+    </style>
+    <!-- Add AWS SDK scripts -->
+    <script src="https://sdk.amazonaws.com/js/aws-sdk-2.1061.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+</head>
+<body>
+<header>
+    <h1>SilentZone</h1>
+</header>
+<main>
+    <div class="usAQI">
+        <h3>Sound Threshold</h3>
+        <div class="faint">Faint 0 - 30 dB</div>
+        <div class="moderate">Moderate To Quiet 40 - 50 dB</div>
+        <div class="loud">Loud 70 dB</div>
+        <div class="very-loud">Very Loud 80 - 100 dB</div>
+        <div class="extremely-loud">Extremely Loud 110 - 130 dB</div>
+    </div>
+    <div class="card">
+        <div class="card-content">
+            <div id="chart"></div>
+            <div id="average-display">Average: -- dB</div>
+        </div>
+    </div>
+</main>
+<script>
+    function initializeChart(deviceId) {
+        // AWS configuration
+        AWS.config.update({
+            region: 'us-west-1', // Your region
+            credentials: new AWS.CognitoIdentityCredentials({
+                IdentityPoolId: 'us-west-1:30a99c5e-b836-4eea-9706-b5fa95982596' // Your actual identity pool ID
+            })
+        });
+
+        const docClient = new AWS.DynamoDB.DocumentClient();
+
+        const options = {
+            series: [{
+                name: 'Sound Level',
+                data: []
+            }],
+            chart: {
+                id: 'realtime',
+                height: 450,
+                type: 'line',
+                fontFamily: 'Helvetica, Arial, sans-serif',
+                foreColor: '#333',
+                animations: {
+                    enabled: true,
+                    easing: 'easeinout',
+                    dynamicAnimation: {
+                        speed: 1000
+                    }
+                },
+                toolbar: {
+                    show: false
+                },
+                zoom: {
+                    enabled: true
+                }
+            },
+            dataLabels: {
+                enabled: false
+            },
+            stroke: {
+                curve: 'smooth',
+                width: 2,
+                colors: ['#028702']
+            },
+            title: {
+                text: 'Dynamic Updating Chart',
+                align: 'left',
+                style: {
+                    fontSize: '18px',
+                    fontWeight: 'bold',
+                    color: '#333'
+                }
+            },
+            xaxis: {
+                type: 'datetime',
+                range: 20000,
+                title: {
+                    text: 'Time',
+                    style: {
+                        fontSize: '14px',
+                        fontWeight: 'bold',
+                        color: '#333'
+                    }
+                },
+                labels: {
+                    format: 'HH:mm:ss',
+                    style: {
+                        colors: '#333',
+                        fontSize: '12px',
+                        fontFamily: 'Arial, sans-serif',
+                        textAlign: 'center'
+                    }
+                }
+            },
+            yaxis: {
+                max: 130,
+                title: {
+                    text: 'Decibel (dB)',
+                    style: {
+                        fontSize: '14px',
+                        fontWeight: 'bold',
+                        color: '#333'
+                    }
+                },
+                labels: {
+                    style: {
+                        colors: '#333',
+                        fontSize: '12px'
+                    }
+                }
+            },
+            tooltip: {
+                theme: 'dark'
+            },
+            legend: {
+                show: false
+            }
+        };
+
+        const chart = new ApexCharts(document.querySelector("#chart"), options);
+        chart.render();
+
+        function fetchData() {
+            const params = {
+                TableName: 'soundLevel',
+                KeyConditionExpression: 'deviceId = :deviceId',
+                ExpressionAttributeValues: {
+                    ':deviceId': deviceId
+                },
+                ScanIndexForward: false,
+                Limit: 100
+            };
+
+            docClient.query(params, (err, data) => {
+                if (err) {
+                    console.error("Unable to query. Error:", JSON.stringify(err, null, 2));
+                } else {
+                    // Assuming data.Items is your array of items as shown in your example
+                    const chartData = data.Items.map(item => {
+                        // Extract the numeric value from the structure
+                        const value = parseFloat(item.M.data.S); // Assuming item.M.data.S contains the string numeric value
+
+                        // Assuming item.timestamp is the timestamp you want to use for X axis
+                        return {
+                            x: new Date(item.timestamp).getTime(), // Convert timestamp to milliseconds
+                            y: value // Use the extracted numeric value
+                        };
+                    });
+
+                    // Assuming 'chart' is your ApexCharts instance
+                    chart.updateSeries([{ name: 'Your Series Name', data: chartData }]);
+                }
+            });
+
+        }
+
+        fetchData();
+        setInterval(fetchData, 2000);
+    }
+
+
+    initializeChart('ST-ESP-SZ_1-V-AMNH');
+</script>
+</body>
+</html>

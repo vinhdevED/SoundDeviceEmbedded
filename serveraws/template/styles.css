@@ -1,14 +1,13 @@
 html {
-    background-color: #fbfbfb; /* Replace with your desired background color */
+    background-color: #ffffff; /* Replace with your desired background color */
 }
 
 body {
-    font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    display: flex;
+    overflow-x: hidden;
+    font-family: Arial, sans-serif;
 }
-
 header {
     color: #100;
     display: flex;
@@ -19,7 +18,7 @@ header {
 }
 
 main {
-    padding: 10px;
+    padding: 0px;
 }
 
 .controls {
@@ -154,85 +153,11 @@ main {
     color: #555;
 }
 
-/* Sidebar styles */
-.sidebar {
-    width: 250px;
-    background-color: #ffffff;
-    color: white;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    padding: 10px;
+#toggleSidebar {
     position: fixed;
-    left: 0;
-    top: 0;
-    transition: transform 0.3s ease-in-out;
-    transform: translateX(-100%);
-    overflow: auto;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-.sidebar.show {
-    transform: translateX(0);
-}
-/*.sidebar.hidden {*/
-/*    transform: translateX(-100%); !* Move off screen when hidden *!*/
-/*}*/
-
-.sidebar h2 {
-    padding: 10px 0;
-    margin: 0 0 10px 0;
-    text-align: center;
-    font-size: 1.5em;
-    color: #110000;
-}
-
-.sidebar .menu-title {
-    padding: 10px 0;
-    margin-top: 20px;
-    font-size: 1.2em;
-    border-bottom: 1px solid #ccc;
-}
-
-.sidebar a {
-    color: #110000;
-    text-decoration: none;
-    padding: 10px;
-    margin: 5px 0;
-    display: inline-block;
-    align-items: center;
-    font-weight: normal;
-    transition: all 0.3s ease
-}
-
-.sidebar a i {
-    margin-right: 10px;
-}
-
-.sidebar a:hover {
-    background-color: #1586ff;
-    border-radius: 10px;
-    color: white;
-    font-weight: bold;
-    padding-left: 14px;
-}
-
-.content {
-    flex: 1;
-    padding: 20px;
-    margin-left: 270px; /* Adjusted for sidebar width */
-    transition: margin-left 0.3s ease-in-out;
-}
-
-.content.sidebar-hidden {
-    margin-left: 250px; /* Adjust to the width of the sidebar */
-}
-
-.menu-toggle {
-    position: absolute;
     top: 10px;
     left: 10px;
-    z-index: 1000;
+    z-index: 1001;
     background-color: #1374fd;
     color: white;
     border: none;
@@ -241,6 +166,227 @@ main {
     transition: background-color 0.3s;
 }
 
-.menu-toggle:hover {
+#toggleSidebar:hover {
     background-color: #63a4e4;
+}
+
+.content {
+    margin-left: -20px;
+
+    transition: margin-left 0.3s ease, margin-top 0.3s ease; /* Include margin-top in the transition */
+}
+
+.chart-container {
+    margin-top: 20px;
+    height: 300px;
+    width: 100%;
+}
+.navbar {
+    width: 100%;
+
+    display: flex;
+    position: fixed;
+    background-color: #ffffff;
+    padding: 10px 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional: Add a shadow for a raised effect */
+}
+
+.tab {
+    flex: 1;
+    padding: 10px 0;
+    text-align: center;
+    text-decoration: none;
+    color: black;
+    cursor: pointer;
+    position: relative;
+    transition: background-color 0.3s ease;
+    margin-left: 10px;
+    margin-right: 10px;
+    border-radius: 10px;
+}
+
+.tab:hover {
+    background-color: #f1f1f1;
+    border-radius: 10px;
+}
+
+.tab.active {
+    background-color: #4caf50;
+    color: white;
+    border-radius: 10px;
+
+}
+
+.tab i {
+    font-size: 1.2rem; /* Adjust icon size as needed */
+    margin-right: 5px; /* Add spacing between icon and text */
+    vertical-align: middle;
+}
+
+
+#content {
+    transition: margin-left 0.3s ease;
+    padding: 60px;
+    box-sizing: border-box;
+    width: 100%;
+    background-color: #ffffff;
+}
+
+#content.shifted {
+    margin-left: 250px; /* Matches the sidebar width */
+}
+
+#chart {
+    height: 400px;
+
+    background-color: #ffffff;
+    border: 2px solid #ccc; /* Viền của .threshold */
+    border-radius: 10px;
+    padding: 10px;
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+
+}
+
+/*--------------------------DASHBOARD---------------------------*/
+
+#threshold {
+    width: 300px; /* Kích thước chiều rộng mong muốn */
+    height: auto; /* Chiều cao tự điều chỉnh tùy theo nội dung */
+    padding: 10px; /* Khoảng cách nội bộ từ viền của .threshold */
+    background-color: #ffffff; /* Màu nền của .threshold */
+    border: 2px solid #ccc; /* Viền của .threshold */
+    border-radius: 8px; /* Độ cong của các góc của .threshold */
+
+}
+
+#thresholdHeader {
+    font-weight: bold;
+    font-size: 18px;
+    text-align: center;
+}
+
+
+.faint {
+    background-color: lightgray;
+    color: black;
+    padding: 5px;
+    border-radius: 5px;
+    margin: 5px 0;
+}
+.moderate {
+    background-color: lightgreen;
+    color: black;
+    padding: 5px;
+    border-radius: 5px;
+    margin: 5px 0;
+}
+.loud {
+    background-color: yellow;
+    color: black;
+    padding: 5px;
+    border-radius: 5px;
+    margin: 5px 0;
+}
+.very-loud {
+    background-color: orange;
+    color: black;
+    padding: 5px;
+    border-radius: 5px;
+    margin: 5px 0;
+}
+.extremely-loud {
+    background-color: red;
+    color: black;
+    padding: 5px;
+    border-radius: 5px;
+    margin: 5px 0;
+}
+
+#container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* Adjust the gap value as needed to create space between the elements */
+    width: 100%;
+}
+
+
+#container-row {
+    display: flex;
+    flex-direction: row;
+    gap: 20px; /* Adjust the gap value as needed to create space between the elements */
+}
+
+
+/*-=--------------------*/
+
+#gauge {
+    width: auto;
+    max-width: 200px; /* Limit the maximum width if needed */
+    height: auto;
+    padding: 10px;
+    background-color: #ffffff;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    top: 20px; /* Adjust as needed to position it correctly */
+    left: 20px; /* Adjust as needed to position it correctly */
+
+}
+
+#gaugeHeader {
+    font-weight: bold;
+    font-size: 18px;
+    text-align: center;
+}
+
+.ring {
+    position: relative;
+    --pointerleft: 11%;
+    --pointertop: 11%;
+    --pointerdeg: -45deg;
+    width: 200px;
+    height: 200px;
+    background-image: radial-gradient(red 0, red 50%, transparent 50%, transparent 100%),
+    radial-gradient(green 0, green 50%, transparent 50%, transparent 100%),
+    radial-gradient(white 0, white 60%, transparent 60%),
+    conic-gradient(orange 0, green 130deg, white 130deg, white 230deg, red 230deg, orange 360deg);
+    background-size: 11% 11%, 11% 11%, 100% 100%, 100% 100%;
+    background-repeat: no-repeat;
+    background-position: 9.2% 82.3%, 90.8% 82.3%, center center, center center;
+    border-radius: 50%;
+    border-style: none;
+    z-index: 1000;
+}
+
+.ring::after {
+    position: absolute;
+    content: '';
+    width: 5%;
+    height: 15%;
+    left: var(--pointerleft);
+    top: var(--pointertop);
+    transform: rotate(var(--pointerdeg));
+    border-style: solid;
+    border-width: 0.5vmin;
+    border-radius: 2vmin;
+    background-color: white;
+}
+
+.speed {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    text-align: center;
+    color: #020202;
+}
+
+.speed .number {
+    font-size: 35px;
+    font-weight: bold;
+}
+
+.speed .units {
+    font-size: 25px;
+    font-weight: bold;
 }

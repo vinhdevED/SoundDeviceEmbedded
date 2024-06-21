@@ -5,10 +5,15 @@ const path = require('path');
 const deviceRoutes = require('./route/deviceRoutes');
 const { connectToDynamoDB } = require('./config/aws-config');
 
-const PORT = process.env.PORT || 3000;
+const EXPRESSPORT = process.env.EXPRESSPORT || 3000;
+const HTTPPORT = process.env.HTTPPORT || 4000;
+
+// Store connections for SSE
+let clients = [];
 
 // Middleware
 app.use(express.static(path.join(__dirname, 'template')));
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json())
 
 app.get('/', (req, res) => {
@@ -16,10 +21,11 @@ app.get('/', (req, res) => {
 });
 
 // Mount deviceRoutes without any prefix
-app.use('/', deviceRoutes);
+app.use('/',  deviceRoutes(clients));
+
 
 // Khởi động server
-app.listen(PORT, async () => {
+app.listen(EXPRESSPORT, async () => {
     await connectToDynamoDB();
-    console.log(`Server is running on port ${PORT}`);
+    console.log(`Server is running on port ${EXPRESSPORT}`);
 });
