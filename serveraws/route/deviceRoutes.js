@@ -5,7 +5,8 @@ const {
     connectDeviceWaiting,
     getDataChart,
     ssePoint,
-    receiveDataIOT
+    receiveDataIOT,
+    fetchLastSoundSensor
 } = require('../controller/deviceController');
 
 module.exports = (clients) => {
@@ -17,15 +18,8 @@ module.exports = (clients) => {
 
     // SSE endpoint
     router.get('/events', ssePoint(clients));
+    router.get('/lastSoundLevels', fetchLastSoundSensor);
+
 
     return router;
 };
-
-
-// router.get('/devices', fetchAllDevice);
-// router.post('/connect-device', connectDeviceWaiting);
-// router.get('/soundLevels',getDataChart);
-// router.post('/endpoint', receiveDataIOT);
-// router.get('/events', ssePoint(clients));
-//
-// module.exports = router;

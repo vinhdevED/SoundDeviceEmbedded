@@ -1,4 +1,4 @@
-const { addDevice, getDevice ,getAllDevices} = require('../model/deviceModel');
+const {getAllDevices} = require('../model/deviceModel');
 const AWS = require('aws-sdk');
 const dynamodb = new AWS.DynamoDB.DocumentClient();
 const { v4: uuidv4 } = require('uuid');
@@ -33,7 +33,7 @@ const getDataChart = async (req, res) => {
                 ':deviceId': 'ST-ESP-SZ_1-V-AMNH'
             },
             ScanIndexForward: false, // Sắp xếp giảm dần theo sort key (timestamp)
-           // Limit: 100 // Số lượng mục tối đa cần lấy
+            //Limit: 100 // Số lượng mục tối đa cần lấy
         };
 
         dynamodb.query(params, (err, data) => {
@@ -53,6 +53,25 @@ const getDataChart = async (req, res) => {
         res.status(500).json({ error: 'Failed to retrieve sound levels' });
     }
 
+}
+
+// Hàm truy vấn giá trị soundLevel mới nhất từ DynamoDB
+const fetchLastSoundSensor = async (req, res) => {
+    const params = {
+        TableName: 'soundLevel',
+        Key: {
+            deviceId: 'ST-ESP-SZ_1-V-AMNH', // Thay thế bằng deviceId của bạn
+        },
+        ProjectionExpression: 'soundLevel', // Chỉ lấy trường soundLevel
+    };
+
+    try {
+        const data = await dynamodb.get(params).promise();
+       // return data.Item.soundLevel; // Trả về giá trị soundLevel
+        res.status(200).json(data.Item.soundLevel)
+    } catch (error) {
+        console.error('Error fetching soundLevel from DynamoDB:', error);
+    }
 }
 
 // SSE endpoint to send real-time updates
@@ -135,46 +154,11 @@ const receiveDataIOT = async (clients,req, res) => {
 }
 
 
-
-
-
-
-
-
-
-// const connectDeviceWaiting = async (req, res) => {
-//const {deviceId } = req.body;
-//
-//     try {
-//
-//         // Update device status in DynamoDB
-//         const params = {
-//             TableName: 'Devices', // Replace with your DynamoDB table name
-//             Key: { deviceId: deviceId },
-//             UpdateExpression: 'set #status = :status',
-//             ExpressionAttributeNames: {
-//                 '#status': 'status'
-//             },
-//             ExpressionAttributeValues: {
-//                 ':status': true // Update status to true (connected)
-//             },
-//             ReturnValues: 'UPDATED_NEW'
-//         };
-//
-//         const updatedDevice = await dynamodb.update(params).promise();
-//
-//         res.status(200).json({ message: 'Device connected successfully', updatedDevice });
-//     } catch (error) {
-//         console.error('Error connecting device:', error);
-//         res.status(500).json({ message: 'Failed to connect device' });
-//     }
-// }
-
-
 module.exports = {
     fetchAllDevice,
     connectDeviceWaiting,
     getDataChart,
     ssePoint,
-    receiveDataIOT
+    receiveDataIOT,
+    fetchLastSoundSensor
 };
