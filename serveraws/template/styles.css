@@ -292,14 +292,7 @@ main {
     margin: 5px 0;
     font-weight: bold;
 }
-.loud {
-    background-color: #fdfd0e;
-    color: black;
-    padding: 5px;
-    border-radius: 5px;
-    margin: 5px 0;
-    font-weight: bold;
-}
+
 .loud {
     background-color: #fdfd0e;
     color: black;
@@ -375,19 +368,18 @@ p {
     font-size: 1.2em;
 }
 
-/* Các class cho các mức âm thanh khác nhau */
 .low {
-    background-color: #8cd6f4; /* Màu xanh */
+    background-color: #8cd6f4;
 }
 
 .medium {
-    background-color: #57f44c; /* Màu vàng */
+    background-color: #57f44c;
 }
 
 .high-light {
-    background-color: #fdfd0e; /* Màu đỏ nhạt */
+    background-color: #fdfd0e;
 }
 
 .high-dark {
-    background-color: #d32f2f; /* Màu đỏ đậm */
+    background-color: #d32f2f;
 }
