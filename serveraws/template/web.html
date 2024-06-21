@@ -33,30 +33,6 @@
     </div>
 
 <script>
-    // Giả sử bạn đã có dữ liệu từ DynamoDB dưới dạng một đối tượng JSON
-    const dataFromDynamoDB = [
-        { "timestamp": "2023-06-20T12:00:00Z", "soundLevel": 50 },
-        { "timestamp": "2023-06-20T12:01:00Z", "soundLevel": 55 },
-        { "timestamp": "2023-06-20T12:02:00Z", "soundLevel": 45 },
-        // Thêm dữ liệu theo định dạng tương tự
-    ];
-
-    // Hàm cập nhật mức âm thanh
-    function updateSoundLevel() {
-        // Lấy một mẫu ngẫu nhiên từ dữ liệu (trong thực tế, bạn có thể lấy dữ liệu mới nhất)
-        const sample = dataFromDynamoDB[Math.floor(Math.random() * dataFromDynamoDB.length)];
-        const soundLevel = sample.soundLevel;
-
-        // Cập nhật thanh đo mức âm thanh và hiển thị mức âm thanh hiện tại
-        const soundBar = document.getElementById('soundBar');
-        const soundLevelText = document.getElementById('soundLevel');
-        soundBar.style.width = `${soundLevel}%`;
-        soundLevelText.textContent = soundLevel;
-    }
-
-    // Cập nhật mức âm thanh mỗi giây
-    setInterval(updateSoundLevel, 1000);
-
 
 
     function loadPage(page) {
@@ -405,6 +381,52 @@
     //     setInterval(fetchSoundLevels, 2000); // Polling every 5 seconds
     // }
 
+    // Hàm lấy giá trị soundLevel mới nhất từ endpoint
+     function fetchLastSoundLevels() {
+         fetch('/lastSoundLevels')
+             .then(response => {
+                 if (!response.ok) {
+                     throw new Error('Network response was not ok');
+                 }
+                 return response.json();
+             })
+             .then(data => {
+                 updateSoundLevel(data);
+             })
+             .catch(error => {
+                 console.error('Error fetching sound levels:', error);
+             });
+    }
+
+    function updateSoundLevel(value) {
+
+        if (value !== undefined) {
+            // Cập nhật thanh đo mức âm thanh và hiển thị mức âm thanh hiện tại
+            const soundBar = document.getElementById('soundBar');
+            const soundLevelText = document.getElementById('soundLevel');
+            soundBar.style.width = `${value}%`;
+            soundLevelText.textContent = value;
+
+            soundBar.classList.remove('low', 'medium', 'high-light', 'high-dark');
+            if (value >= 30 && value < 45) {
+                soundBar.classList.add('low');
+            } else if (value >= 45 && value < 60) {
+                soundBar.classList.add('medium');
+            } else if (value >= 60 && value < 75) {
+                soundBar.classList.add('high-light');
+            } else if (value >= 75) {
+                soundBar.classList.add('high-dark');
+            }
+
+        } else {
+            console.error('Failed to fetch soundLevel from endpoint');
+        }
+    }
+
+    setInterval(fetchLastSoundLevels, 500);
+
+
+
     let dataArray = [];
     function drawChart() {
         const options = {
@@ -432,16 +454,16 @@
                     enabled: true
                 }
             },
-            markers: {
-                size: 3,
-                colors: ["#016001"],
-                strokeColor: "#f3f3f3",
-                strokeWidth: 2
-            },
+            // markers: {
+            //     size: 3,
+            //     colors: ["#016001"],
+            //     strokeColor: "#f3f3f3",
+            //     strokeWidth: 2
+            // },
             annotations: {
                 yaxis: [{
-                    y: 65,
-                    y2: 70,
+                    y: 62,
+                    y2: 68,
                     borderColor: '#FF0000',
                     fillColor: '#fd7e7e',
                     label: {
@@ -453,7 +475,7 @@
                             fontSize: '12px',
                             fontWeight: 'bold'
                         },
-                        text: '> 65 dB Threshold'
+                        text: '> 62 dB Threshold'
                     },
                 }]
             },
@@ -570,6 +592,8 @@
             console.error('Error receiving SSE:', error);
         };
     }
+
+
 
     // Load devices when the page loads
         window.onload = () => loadPage('home');

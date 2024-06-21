@@ -268,39 +268,54 @@ main {
 
 
 .faint {
-    background-color: lightgray;
+    background-color: #a6a6a6;
     color: black;
     padding: 5px;
     border-radius: 5px;
     margin: 5px 0;
+    font-weight: bold;
 }
-.moderate {
-    background-color: lightgreen;
+.quiet {
+    background-color: #8cd6f4;
     color: black;
     padding: 5px;
     border-radius: 5px;
     margin: 5px 0;
+    font-weight: bold;
+}
+
+.normal {
+    background-color: #57f44c;
+    color: black;
+    padding: 5px;
+    border-radius: 5px;
+    margin: 5px 0;
+    font-weight: bold;
 }
 .loud {
-    background-color: yellow;
+    background-color: #fdfd0e;
     color: black;
     padding: 5px;
     border-radius: 5px;
     margin: 5px 0;
+    font-weight: bold;
 }
-.very-loud {
-    background-color: orange;
+.loud {
+    background-color: #fdfd0e;
     color: black;
     padding: 5px;
     border-radius: 5px;
     margin: 5px 0;
+    font-weight: bold;
 }
+
 .extremely-loud {
-    background-color: red;
+    background-color: #f85c5c;
     color: black;
     padding: 5px;
     border-radius: 5px;
     margin: 5px 0;
+    font-weight: bold;
 }
 
 #container {
@@ -334,12 +349,6 @@ main {
 }
 
 
-:root {
-    --color-theme-accent1-500: #f6e05e; /* Ví dụ màu vàng */
-    --color-theme-accent1: #48bb78;
-    --color-theme-red-500: #e53e3e; /* Ví dụ màu đỏ */
-}
-
 #gaugeHeader {
     font-weight: bold;
     font-size: 18px;
@@ -364,4 +373,21 @@ main {
 
 p {
     font-size: 1.2em;
+}
+
+/* Các class cho các mức âm thanh khác nhau */
+.low {
+    background-color: #8cd6f4; /* Màu xanh */
+}
+
+.medium {
+    background-color: #57f44c; /* Màu vàng */
+}
+
+.high-light {
+    background-color: #fdfd0e; /* Màu đỏ nhạt */
+}
+
+.high-dark {
+    background-color: #d32f2f; /* Màu đỏ đậm */
 }
