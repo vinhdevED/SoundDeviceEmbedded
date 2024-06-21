@@ -89,9 +89,10 @@ const receiveDataIOT = async (clients,req, res) => {
             Key: {
                 deviceId: deviceId.toString(),
             },
-            UpdateExpression: 'SET #listDatas = list_append(if_not_exists(#listDatas, :empty_list), :data)',
+            UpdateExpression: 'SET #listDatas = list_append(if_not_exists(#listDatas, :empty_list), :data),#soundLevel = :soundLevel',
             ExpressionAttributeNames: {
                 '#listDatas': 'listDatas',
+                '#soundLevel': 'soundLevel', // Thêm trường soundLevel vào danh sách cập nhật
             },
             ExpressionAttributeValues: {
                 ':data': [
