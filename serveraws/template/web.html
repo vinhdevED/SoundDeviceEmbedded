@@ -406,6 +406,7 @@
             const soundLevelText = document.getElementById('soundLevel');
             soundBar.style.width = `${value}%`;
             soundLevelText.textContent = value;
+<<<<<<< HEAD
 
             soundBar.classList.remove('low', 'medium', 'high-light', 'high-dark');
             if (value >= 30 && value < 45) {
@@ -418,6 +419,8 @@
                 soundBar.classList.add('high-dark');
             }
 
+=======
+>>>>>>> f6367910896e1c7cd7235e290ff622220976c7e1
         } else {
             console.error('Failed to fetch soundLevel from endpoint');
         }
