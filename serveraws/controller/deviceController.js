@@ -101,6 +101,7 @@ const receiveDataIOT = async (clients,req, res) => {
                     },
                 ],
                 ':empty_list': [],
+                ':soundLevel': soundLevel.toString(),
             },
             ReturnValues: 'ALL_NEW',
         };

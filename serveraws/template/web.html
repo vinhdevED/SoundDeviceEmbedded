@@ -33,6 +33,31 @@
     </div>
 
 <script>
+    // Giả sử bạn đã có dữ liệu từ DynamoDB dưới dạng một đối tượng JSON
+    const dataFromDynamoDB = [
+        { "timestamp": "2023-06-20T12:00:00Z", "soundLevel": 50 },
+        { "timestamp": "2023-06-20T12:01:00Z", "soundLevel": 55 },
+        { "timestamp": "2023-06-20T12:02:00Z", "soundLevel": 45 },
+        // Thêm dữ liệu theo định dạng tương tự
+    ];
+
+    // Hàm cập nhật mức âm thanh
+    function updateSoundLevel() {
+        // Lấy một mẫu ngẫu nhiên từ dữ liệu (trong thực tế, bạn có thể lấy dữ liệu mới nhất)
+        const sample = dataFromDynamoDB[Math.floor(Math.random() * dataFromDynamoDB.length)];
+        const soundLevel = sample.soundLevel;
+
+        // Cập nhật thanh đo mức âm thanh và hiển thị mức âm thanh hiện tại
+        const soundBar = document.getElementById('soundBar');
+        const soundLevelText = document.getElementById('soundLevel');
+        soundBar.style.width = `${soundLevel}%`;
+        soundLevelText.textContent = soundLevel;
+    }
+
+    // Cập nhật mức âm thanh mỗi giây
+    setInterval(updateSoundLevel, 1000);
+
+
 
     function loadPage(page) {
         const mainContent = document.getElementById('content');
