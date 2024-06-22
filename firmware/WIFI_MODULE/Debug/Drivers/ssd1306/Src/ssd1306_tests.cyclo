@@ -1,0 +1,4 @@
+../Drivers/ssd1306/Src/ssd1306_tests.c:194:6:ssd1306_InitializeDevice	2
+../Drivers/ssd1306/Src/ssd1306_tests.c:211:6:showProgress	1
+../Drivers/ssd1306/Src/ssd1306_tests.c:232:6:test	1
+../Drivers/ssd1306/Src/ssd1306_tests.c:250:6:showMonitoring	1
