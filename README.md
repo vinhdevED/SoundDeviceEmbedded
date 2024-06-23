@@ -1,5 +1,5 @@
 # Warning and Measuring Noise Level from Outside Effect to Classroom
-`The project has the spiritual support of NTKA 💌 aka honey`
+`⬇️ The project has the spiritual support of NTKA 💌 aka honey ⬇️`
 - Overview about this project, this device measures the noise/sound level thourgh sound sensor (Simple) to give a warning (Text/LED !Not Any Sound) and use Wifi to send data to Cloud Server for Dashboard Management.
 - In AWS, I use the service EC2 for deploy Server and DynamoDB for storing and querying data.
 - This is the perfect combination of embedded systems, electronic circuits and IT.
