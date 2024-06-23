@@ -1,7 +1,12 @@
 # Warning and Measuring Noise Level Effect to Classroom
 - Overview about this project, this device measures the noise/sound level thourgh sound sensor (Simple) to give a warning (Text/LED !Not Any Sound) and use Wifi to send data to Cloud Server for Dashboard Management.
+- In AWS, I use the service EC2 for deploy Server and DynamoDB for storing and querying data.
 - I just focus on Hardware and Firmware in this section description
 ## A - Introduction Device
+This device uses `STM32F103C8T6 for MCU` and `ESP12F for Wireless Connection`. ESP12F is the main factor of this description and helps STM32F103 connect Internet to send or recevive through HTTP protocol. The photo below is a combination of the components together.
+<p align="center">
+  <img src="https://github.com/vinhdevED/SoundDeviceEmbedded/blob/main/assets/Hardware%20Connection.jpg" alt="Hardware Connection"/>
+</p>
 
 ## B - Schematic Hardware
 
