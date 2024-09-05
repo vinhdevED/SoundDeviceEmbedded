@@ -12,6 +12,22 @@ This device uses `STM32F103C8T6 for MCU` and `ESP12F for Wireless Connection`. E
 </p>
 
 ## B - Schematic Hardware
+### Pin Connection Table
+| **STM32F1 Pin** | **ESP12F**  | **DS3231**  | **MAX4466**  | **Description**        |
+|-----------------|-----------------|-----------------|------------------|------------------------|
+| 3.3V            | VCC             | VCC             | VCC              | Power supply (3.3V)    |
+| GND             | GND             | GND             | GND              | Ground                 |
+| PB6 (I2C1_SCL)  | -               | SCL             | -                | I2C Clock              |
+| PB7 (I2C1_SDA)  | -               | SDA             | -                | I2C Data               |
+| PA9 (USART1_TX) | RXD             | -               | -                | UART Transmit          |
+| PA10 (USART1_RX)| TXD             | -               | -                | UART Receive           |
+| PA0 (ADC_IN0)   | -               | -               | OUT              | Audio input from MAX4466|
+
+### Pin Definitions:
+- **STM32F1**: Uses PB6 and PB7 for I2C communication with DS3231 (real-time clock). PA9 and PA10 are used for UART communication with ESP12F (Wi-Fi module). PA0 is used for analog input from the MAX4466 (microphone amplifier).
+- **ESP12F**: Communicates with STM32F1 via UART using TXD and RXD.
+- **DS3231**: Real-time clock module uses I2C communication with STM32F1.
+- **MAX4466**: Outputs audio signal to STM32F1’s ADC pin (PA0).
 
 ## C - Guide Config and Connection
 ### 1 - Firmware
@@ -26,3 +42,6 @@ AWS_REGION=your-region.
 EXPRESSPORT=your-port.
 ```
 ## D - Demo
+<p align="center">
+  <img src="https://github.com/vinhdevED/SoundDeviceEmbedded/blob/main/assets/End%20Device.jpg" alt="Hardware Connection"/>
+</p>
